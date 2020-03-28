@@ -1,0 +1,4 @@
+.idea/
+out/
+testdata/hashtable/large.out
+testdata/hashtable/small.out
