@@ -10,7 +10,11 @@ public class CuckooHashtable implements MyHashtable {
     public static final int INITIAL_TABLE_CAPACITY = 8;
     public static final int CUCKOO_TABLES = 2;
     public static final int INITIAL_CAPACITY = INITIAL_TABLE_CAPACITY * CUCKOO_TABLES;// 16
-    public static final String IMPLEMENTATION = "Cuckoo hashing";
+    public static final String IMPLEMENTATION = "Cuckoo";
+
+    public String getImplementation() {
+        return IMPLEMENTATION;
+    }
 
     private int H1(int key) {
         if (key >= 0) {
@@ -45,6 +49,14 @@ public class CuckooHashtable implements MyHashtable {
 
     @Override
     public Boolean set(Integer key, Integer value) {
+        if (table1[H1(key)].checkKey(key)) {
+            table1[H1(key)].set(key, value);
+            return true;
+        }
+        if (table2[H2(key)].checkKey(key)) {
+            table2[H2(key)].set(key, value);
+            return true;
+        }
         while (hasCycle(key)) {
             resize();
         }
@@ -100,7 +112,6 @@ public class CuckooHashtable implements MyHashtable {
     public Integer resize() {
         KVPair[] oldTable1 = table1;
         KVPair[] oldTable2 = table2;
-        Integer oldTableCapacity = tableCapacity;
 
         tableCapacity *= 2;
         capacity *= 2;
@@ -109,15 +120,15 @@ public class CuckooHashtable implements MyHashtable {
         table2 = new KVPair[tableCapacity];
         KVPair.initArray(table1);
         KVPair.initArray(table2);
-        restoreOldTable(oldTable1, oldTableCapacity);
-        restoreOldTable(oldTable2, oldTableCapacity);
+        recoverOldTable(oldTable2);
+        recoverOldTable(oldTable1);
         return capacity;
     }
 
-    private void restoreOldTable(KVPair[] oldTable2, Integer oldTableCapacity) {
-        for (int i = 0; i < oldTableCapacity; i++) {
-            if (oldTable2[i].isUsed) {
-                this.set(oldTable2[i].key, oldTable2[i].value);
+    private void recoverOldTable(KVPair[] oldTable) {
+        for (int i = 0; i < oldTable.length; i++) {
+            if (oldTable[i].isUsed) {
+                this.set(oldTable[i].key, oldTable[i].value);
             }
         }
     }

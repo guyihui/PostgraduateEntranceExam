@@ -1,6 +1,7 @@
 package com.sjtu.hashtable;
 
 public interface MyHashtable {
+    String getImplementation();
 
     // 将键值对(key,value)插⼊入到哈希表中，若key已存在，则替换当前的value
     Boolean set(Integer key, Integer value);

@@ -6,7 +6,12 @@ import java.util.Arrays;
 
 public final class LinearHashtable implements MyHashtable {
     public static final int INITIAL_CAPACITY = 8;
-    public static final String IMPLEMENTATION = "Linear hashing";
+    public static final String IMPLEMENTATION = "Linear";
+
+    @Override
+    public String getImplementation() {
+        return IMPLEMENTATION;
+    }
 
     private int H(int key) {
         if (key >= 0) {
